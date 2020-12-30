@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Live Configuration Page </title>
+</head>
+<body>
+  <div> 
+    <form id = "form">
+    <fieldset>
+      <legend>Play.Limitless Options</legend> 
+      <div>
+        <label for="tournament_url">Tournament Link: </label>
+        <input type="text" id = "tournament_url" name="Tournament Link"> 
+      </div>
+      <br/>
+      <div>
+        <label for="player_url">Player Link for Tournament: </label>
+        <input type="text" id = "player_url" name="Player URL"> 
+      </div>
+      <br/>
+      <input type="submit" value="Submit">
+    </fieldset> 
+    </form>
+  </div>
+  
+<!--import jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  
+<!--import extension helper library -->
+  <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+  <script src="live_config.js" type="text/javascript"></script>
+</body>
+
+</html>
