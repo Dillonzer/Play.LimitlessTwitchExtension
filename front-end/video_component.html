@@ -3,11 +3,20 @@
 <head>
     <title>Viewer Page</title>
 </head>
-<body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+<link rel="stylesheet" href="viewer.css">
+<body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: white;">
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
-    <div id="tournament_url">
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="#">About</a>
+        <a href="#">Standings</a>
+        <a href="#">Player Profile</a>
+      </div>
+      
+      <!-- Use any element to open the sidenav -->
+      <button onclick="openNav()">></button>
+      
 
-    </div>
 
 </body>
 <script src="viewer.js" type="text/javascript"></script>
