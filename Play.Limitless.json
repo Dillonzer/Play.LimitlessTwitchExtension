@@ -56,7 +56,7 @@
     "bitsEnabled": false,
     "canInstall": true,
     "configUrl": "https://localhost:8080/config.html",
-    "configurationLocation": "hosted",
+    "configurationLocation": "none",
     "description": "",
     "eulaTosUrl": "",
     "hasChatSupport": false,

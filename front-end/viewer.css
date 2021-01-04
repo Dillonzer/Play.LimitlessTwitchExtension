@@ -39,11 +39,48 @@
   /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
   #main {
     transition: margin-left .5s;
-    padding: 20px;
+    padding: 8px;
   }
   
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
   @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}
     .sidenav a {font-size: 18px;}
+  }
+
+  #tournamentInformation {
+      height: 100px;
+      background-color: red;
+  }
+
+  #tournamentName {
+      float:left;
+      font-weight: bolder;
+      font-size: large;
+  }
+
+  #roundTimer {
+      float: right;
+      font-weight: bolder;
+      font-size: large;
+      padding-right: 10px
+  }
+
+  #currentRoundInformation {
+      float:left;
+  }
+
+  #playersCurrentRound {
+      float: left;
+      text-align: center;
+  }
+
+  #currentOpponent {
+      float: right;
+      text-align: center;
+  }
+
+  #content {
+    clear: both;
+    text-align: center;
   }

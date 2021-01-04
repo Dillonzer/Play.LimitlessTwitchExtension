@@ -8,14 +8,46 @@
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#">About</a>
-        <a href="#">Standings</a>
-        <a href="#">Player Profile</a>
-      </div>
+        <a href="#">Current Standings</a>
+        <a href="#">Current Match Information</a>
+        <a href="#">Streamer's Matches</a>
+        <a href="#" onclick="openAbout()">About Extension</a>
+    </div>
       
-      <!-- Use any element to open the sidenav -->
-      <button onclick="openNav()">></button>
-      
+    <img src="/images/hamburgericon.png" onclick="openNav()" style="height: 50px; width: 50px; float: left">
+    <div id="main">
+        <div id="headerDiv">
+            <div id="tournamentInformation">
+                <p id="tournamentName">Tournament Name</p>
+                <p id="roundTimer">XX:XX</p>
+            </div>
+            <div id="playersCurrentRound">
+                <p id="playersName">Player's Name</p>
+                <p id="playersRecord">(0-0-0)</p>
+            </div>
+            <div id="currentOpponent">
+                <p id="opponentsName">Current Opponent</p>
+                <p id="opponentsRecord">(0-0-0)</p>
+            </div>
+        </div>
+        <div id="content">
+            <div id="currentStandings">
+                <table>
+                    <tr><th>Place</th><th>Name</th></tr>
+                    <tr><td>1</td><td>Dillonzer</td></tr>
+                </table>
+            </div>
+            <div id="currentMatchInformation" style="display: none;">
+
+            </div>
+            <div id="streamersMatches" style="display: none;">
+
+            </div>
+            <div id="about" style="display: none;">
+                <p>Thanks to Robin and Limitless!</p>
+            </div>
+        </div>
+    </div>
 
 
 </body>
