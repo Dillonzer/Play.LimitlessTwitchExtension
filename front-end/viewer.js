@@ -6,6 +6,7 @@ function Tournament(name, organizer, format, round)
   this.Organizer = organizer;
   this.Format = format;
   this.Round = round;
+  this.RoundEnd = new Date(0);
   this.Ongoing = true;
 }
 
@@ -59,13 +60,9 @@ twitch.onAuthorized((auth) => {
   token = auth.token;
   userId = auth.userId;
   channelId = auth.channelId;
-});
+  configureExtension()
 
-window.onload = function()
-{
-  //configureExtension()
-  getTournamentInformation()
-}
+});
 
 function configureExtension() {
     var settings = {
@@ -75,11 +72,13 @@ function configureExtension() {
       };
       
       $.ajax(settings).done(function (response) {
+        console.log(response)
         tournamentId = response.tournamentID;
         playerName = response.playerID;
-      }); 
 
-      getTournamentInformation()
+        getTournamentInformation()
+        updateInformation()
+      }); 
 }
 
 function openStandings()
@@ -92,8 +91,7 @@ function openStandings()
 
 function getTournamentInformation() {
   var settings = {
-    //"url": "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId,
-    "url": "https://play.limitlesstcg.com/ext/dillonzer/init?username=luby&tournamentId=5fec87f62bcc8c609c5d2398",
+    "url": "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId,
     "method": "GET",
     "timeout": 0,
   };
@@ -120,7 +118,7 @@ function getStandings()
   standingsObject = []
   $.ajax({
     type: "GET",
-    url: "https://play.limitlesstcg.com/ext/dillonzer/standings?tournamentId=5ff5d4134a35987a4d79faec",//+tournamentId,
+    url: "https://play.limitlesstcg.com/ext/dillonzer/standings?tournamentId="+tournamentId,
     success: function(data) {
     if( data.length ) {
           for( item in data ) {
@@ -175,7 +173,6 @@ function setTournamentInformation()
 {
   document.getElementById("tournamentName").textContent = tournamentObject.Name
   document.getElementById("format").src = "https://play.limitlesstcg.com/img/formats/"+tournamentObject.Format.toLowerCase()+".png"
-  updateInformation()
 }
 
 function updatePlayerInformation()
@@ -197,33 +194,69 @@ function updatePlayerInformation()
   {
     document.getElementById("tournamentOngoing").src = "./images/red_light.png"
   }
-  //document.getElementById("playerRecord").textContent = playerObject.Record
+  document.getElementById("playerRecord").textContent = playerObject.Record
 }
 
-function updateInformation() {
+var timerFunction = function() {  
+  if(typeof tournamentObject.RoundEnd != 'undefined')
+  {
+    var now = new Date().getTime();
+    var roundEnd = tournamentObject.RoundEnd
+    var timeleft = roundEnd - now;
+    
+    var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+    var stringSeconds = ""
+    if(seconds.toString().length == 1)
+    {
+      stringSeconds = "0" + seconds
+    }
+    else
+    {
+      stringSeconds = seconds
+    }
+
+    document.getElementById("roundTimer").textContent = minutes + ":" + stringSeconds
+    
+    if (timeleft < 0) {
+      clearInterval(timerFunction);    
+      document.getElementById("roundTimer").textContent = "ROUND OVER"
+      setInterval(updateInformation, 1000)
+    }
+  }
+  
+}
+
+var updateInformation = function() {
   var settings = {
-    //"url": "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId,
-    "url": "https://play.limitlesstcg.com/ext/dillonzer/update?username=luby&tournamentId=5fec87f62bcc8c609c5d2398",
+    "url": "https://play.limitlesstcg.com/ext/dillonzer/update?username="+playerName+"&tournamentId="+tournamentId,
     "method": "GET",
     "timeout": 0,
   };
   
   $.ajax(settings).done(function (response) {
     
-    tournamentObject.Round = response.tournament.round
-    tournamentObject.Ongoing = response.tournament.ongoing
-    if(typeof response.match.opponent.deck !== 'undefined')
+    var currentRound = tournamentObject.Round
+    if(currentRound != response.tournament.round)
     {
-      decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
-      opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
+      tournamentObject.Round = response.tournament.round
+      tournamentObject.Ongoing = response.tournament.ongoing
+      tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
+      if(typeof response.match.opponent.deck !== 'undefined')
+      {
+        decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
+        opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
+      }
+      else
+      {
+        opponentObject = new Player(response.match.opponent.name,"","","")
+      }
+      playerObject.Record = response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
+      playerObject.Active = response.player.active
+      matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
+      updatePlayerInformation()
+      setInterval(timerFunction, 1000)
+      clearInterval(updateInformation)
     }
-    else
-    {
-      opponentObject = new Player(response.match.opponent.name,"","","")
-    }
-    playerObject.record = response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
-    playerObject.Active = response.player.active
-    matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
-    updatePlayerInformation()
   });
 }

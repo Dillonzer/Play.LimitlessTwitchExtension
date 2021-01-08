@@ -11,8 +11,8 @@ $(function(){
   $("#form").submit(function(e){
       e.preventDefault()
 
-      username = $("#playerName").val()      
-      tournament = $("#tournamentId").val()
+      var username = $("#playerName").val()      
+      var tournament = $("#tournamentId").val()
 
       var settings = {
         "url": "https://dev-ptcg-api.herokuapp.com/playlimitless/upsert/"+tournament+"/"+username+"/"+channelId,
@@ -21,13 +21,12 @@ $(function(){
       };
       
       $.ajax(settings).done(function (response) {
-        configureExtension()
       });
   })
 })
 
 function LoadTournaments(){
-  username = $("#playerName").val()  
+  var username = $("#playerName").val()  
   var select = $('#tournamentId');
   
   $.ajax({
