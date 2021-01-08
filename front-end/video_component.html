@@ -4,44 +4,41 @@
     <title>Viewer Page</title>
 </head>
 <link rel="stylesheet" href="viewer.css">
-<body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: white;">
+<body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: white; font-size: larger;">
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
-    <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#" onclick="openStandings()">Current Standings</a>
-        <a href="#">Current Match Information</a>
-        <a href="#">Streamer's Matches</a>
-        <a href="#" onclick="openAbout()">About Extension</a>
-    </div>
       
-    <img src="/images/hamburgericon.png" onclick="openNav()" style="height: 50px; width: 50px; float: left">
-    <div id="main">
-        <div id="headerDiv">
-            <div id="tournamentInformation">
-                <p id="tournamentName"></p>
-                <p id="roundTimer"></p>
-            </div>
-            <div id="playersCurrentRound">
-                <p id="playersName"></p>
-                <p id="playersRecord"></p>
-            </div>
-            <div id="currentOpponent">
-                <p id="opponentsName"></p>
-                <p id="opponentsRecord"></p>
-            </div>
+    <img src="/images/Limitless.png" style="float: left; padding-top: 10px;">
+    <div id="headerDiv">
+        <div>
+            <a href="#" onclick="openStandings()" class="navLink">Standings</a>
         </div>
-        <div id="content">
-            <div id="currentStandings">
-                <table id="standingsTable">
-
-                </table>
-            </div>
-            <div id="currentMatchInformation" style="display: none;"></div>
-            <div id="streamersMatches" style="display: none;"></div>
-            <div id="about" style="display: none;">
-                <p>Thanks to Robin and Limitless!</p>
-            </div>
+        <div>
+            <a href="#" class="navLink" style="padding-left: 10px;">Match Information</a>
         </div>
+        
+        <img id="dropStatus"/>
+        <div id="playerInformation"> 
+            <p id="playerName"></p>
+            <p id="playerRecord">0-0-0</p>  
+        </div>
+    </div>
+    <div id="headerTournamentInformation">
+        <div id="tournamentInformation">
+            <img id="tournamentOngoing" />
+            <table id="tournamentInfoTable" style="float:left">
+                <tr>
+                    <td><p id="tournamentName"></p></td>
+                    <td><img id="format"></img></td>
+                </tr>
+            </table>
+            <p id="roundTimer">00:00</p>
+        </div>
+    </div>
+    <div id="content">
+        <div id="currentStandings">
+            <table id="standingsTable"></table>
+        </div>
+        <div id="currentMatchInformation" style="display: none;"></div>
     </div>
 
 <!--import jquery -->

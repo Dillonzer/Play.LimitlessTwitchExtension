@@ -1,10 +1,12 @@
 var token, userId, channelId, tournamentId, playerName;
 
-function Tournament(name, organizer, format)
+function Tournament(name, organizer, format, round)
 {
   this.Name = name;
   this.Organizer = organizer;
   this.Format = format;
+  this.Round = round;
+  this.Ongoing = true;
 }
 
 function Player(name, deck, icons, decklist)
@@ -13,6 +15,7 @@ function Player(name, deck, icons, decklist)
   this.Deck = deck;
   this.Icons = icons;
   this.Decklist = decklist;
+  this.Active = true;
 }
 
 function Decklist(pokemon, trainers, energy)
@@ -34,7 +37,14 @@ function Standings(placing, username, name, country, points, record, deck, icons
   this.Icons = icons;
 }
 
-var tournamentObject, playerObject, decklistObject
+function Match(completed, playerScore, oppScore)
+{
+  this.Completed = completed;
+  this.PlayerScore = playerScore;
+  this.OppScore = oppScore;
+}
+
+var tournamentObject, playerObject, opponentObject, decklistObject, matchObject
 var standingsObject = [];
 
 // so we don't have to write this out everytime 
@@ -51,6 +61,12 @@ twitch.onAuthorized((auth) => {
   channelId = auth.channelId;
 });
 
+window.onload = function()
+{
+  //configureExtension()
+  getTournamentInformation()
+}
+
 function configureExtension() {
     var settings = {
         "url": "https://dev-ptcg-api.herokuapp.com/playlimitless/values/"+channelId,
@@ -62,49 +78,40 @@ function configureExtension() {
         tournamentId = response.tournamentID;
         playerName = response.playerID;
       }); 
-}
 
-/* Set the width of the side navigation to 250px and the left margin of the page content to 250px and add a black background color to body */
-function openNav() {
-  document.getElementById("mySidenav").style.width = "250px";
-  document.getElementById("main").style.marginLeft = "250px";
-}
-
-/* Set the width of the side navigation to 0 and the left margin of the page content to 0, and the background color of body to white */
-function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-  document.getElementById("main").style.marginLeft = "0";
-}
-
-function openAbout() 
-{
-  document.getElementById("about").style.display = "";
-  document.getElementById("currentStandings").style.display = "none";
-  document.getElementById("currentMatchInformation").style.display = "none";
-  document.getElementById("streamersMatches").style.display = "none";  
+      getTournamentInformation()
 }
 
 function openStandings()
 {
-  document.getElementById("about").style.display = "none";
   document.getElementById("currentStandings").style.display = "";
   document.getElementById("currentMatchInformation").style.display = "none";
-  document.getElementById("streamersMatches").style.display = "none";  
 
   getStandings()
 }
 
 function getTournamentInformation() {
   var settings = {
-    "url": "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId,
+    //"url": "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId,
+    "url": "https://play.limitlesstcg.com/ext/dillonzer/init?username=luby&tournamentId=5fec87f62bcc8c609c5d2398",
     "method": "GET",
     "timeout": 0,
   };
   
   $.ajax(settings).done(function (response) {
+    
     tournamentObject = new Tournament(response.tournament.name, response.tournament.organizer, response.tournament.format)
-    decklistObject = new Decklist(response.player.decklist.pokemon, response.player.decklist.trainer, response.player.decklist.energy)
-    playerObject = new Player(response.player.name, response.player.deck.name, response.player.deck.icons, decklistObject)
+    if(typeof response.player.deck !== 'undefined')
+    {
+      decklistObject = new Decklist(response.player.decklist.pokemon, response.player.decklist.trainer, response.player.decklist.energy)
+      playerObject = new Player(response.player.name, response.player.deck.name, response.player.deck.icons, decklistObject)
+    }
+    else
+    {
+      playerObject = new Player(response.player.name,"","","")
+    }
+
+    setTournamentInformation()
   });
 }
 
@@ -162,4 +169,61 @@ function createStandings()
       }
     }
   }
+}
+
+function setTournamentInformation()
+{
+  document.getElementById("tournamentName").textContent = tournamentObject.Name
+  document.getElementById("format").src = "https://play.limitlesstcg.com/img/formats/"+tournamentObject.Format.toLowerCase()+".png"
+  updateInformation()
+}
+
+function updatePlayerInformation()
+{  
+  document.getElementById("playerName").textContent = playerObject.Name
+  if(playerObject.Active)
+  {
+    document.getElementById("dropStatus").src = "./images/green_light.png"
+  }
+  else
+  {
+    document.getElementById("dropStatus").src = "./images/red_light.png"
+  }
+  if(tournamentObject.Ongoing)
+  {
+    document.getElementById("tournamentOngoing").src = "./images/green_light.png"
+  }
+  else
+  {
+    document.getElementById("tournamentOngoing").src = "./images/red_light.png"
+  }
+  //document.getElementById("playerRecord").textContent = playerObject.Record
+}
+
+function updateInformation() {
+  var settings = {
+    //"url": "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId,
+    "url": "https://play.limitlesstcg.com/ext/dillonzer/update?username=luby&tournamentId=5fec87f62bcc8c609c5d2398",
+    "method": "GET",
+    "timeout": 0,
+  };
+  
+  $.ajax(settings).done(function (response) {
+    
+    tournamentObject.Round = response.tournament.round
+    tournamentObject.Ongoing = response.tournament.ongoing
+    if(typeof response.match.opponent.deck !== 'undefined')
+    {
+      decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
+      opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
+    }
+    else
+    {
+      opponentObject = new Player(response.match.opponent.name,"","","")
+    }
+    playerObject.record = response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
+    playerObject.Active = response.player.active
+    matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
+    updatePlayerInformation()
+  });
 }
