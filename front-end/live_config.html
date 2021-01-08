@@ -10,16 +10,17 @@
     <fieldset>
       <legend>Play.Limitless Options</legend> 
       <div>
-        <label for="tournament_url">Tournament Link: </label>
-        <input type="text" id = "tournament_url" name="Tournament Link"> 
+        <label for="playerName">Player Name: </label>
+        <input type="text" id = "playerName" name="Player Name"> <br/>
+        <button onclick=LoadTournaments()>Get Tournaments</button>
       </div>
       <br/>
       <div>
-        <label for="player_url">Player Link for Tournament: </label>
-        <input type="text" id = "player_url" name="Player URL"> 
-      </div>
+        <label for="tournamentId">Current Tournament: </label>
+        <select id="tournamentId"></select>
+      </div>      
       <br/>
-      <input type="submit" value="Submit">
+      <input id="submit" type="submit" value="Submit" disabled>
     </fieldset> 
     </form>
   </div>

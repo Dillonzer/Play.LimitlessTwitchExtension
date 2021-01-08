@@ -10,17 +10,43 @@ window.Twitch.ext.onAuthorized((auth) => {
 $(function(){
   $("#form").submit(function(e){
       e.preventDefault()
-      tournament_url = $("#tournament_url").val()
-      player_url = $("#player_url").val()
+
+      username = $("#playerName").val()      
+      tournament = $("#tournamentId").val()
 
       var settings = {
-        "url": "https://dev-ptcg-api.herokuapp.com/playlimitless/upsert/"+tournament_url+"/"+player_url+"/"+channelId,
+        "url": "https://dev-ptcg-api.herokuapp.com/playlimitless/upsert/"+tournament+"/"+username+"/"+channelId,
         "method": "POST",
         "timeout": 0,
       };
       
       $.ajax(settings).done(function (response) {
-        console.log(response);
+        //console.log(response);
       });
   })
 })
+
+function LoadTournaments(){
+  username = $("#playerName").val()  
+  var select = $('#tournamentId');
+  
+  $.ajax({
+    type: "GET",
+    url: "https://play.limitlesstcg.com/ext/dillonzer/registrations?username="+username,
+    success: function(data) {
+    var htmlOptions = [];
+    if( data.length ) {
+          for( item in data ) {
+              html = '<option value="' + data[item].id + '">' + data[item].name + '</option>';
+          htmlOptions[htmlOptions.length] = html;
+          }
+
+          select.empty().append( htmlOptions.join('') );
+          $('#submit').prop('disabled', false);
+      }
+    },
+    error: function(error) {
+        alert(error.responseJSON.message);
+    }
+      })
+}

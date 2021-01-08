@@ -1,4 +1,4 @@
-var token, userId, channelId;
+var token, userId, channelId, tournamentId, playerName;
 
 // so we don't have to write this out everytime 
 const twitch = window.Twitch.ext;
@@ -22,12 +22,9 @@ function configureExtension() {
       };
       
       $.ajax(settings).done(function (response) {
-        console.log(response);
-      });
-
-   // $('$tournament_iframe').empty();
-   // $('$tournament_iframe').append($('<iframeframeborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color: white;" height="100%" width="100%" ></iframe>').src(options[0]));
-    
+        tournamentId = response.tournamentID;
+        playerName = response.playerID;
+      }); 
 }
 
 /* Set the width of the side navigation to 250px and the left margin of the page content to 250px and add a black background color to body */
@@ -44,6 +41,7 @@ function closeNav() {
 
 function openAbout() 
 {
+  configureExtension()
   document.getElementById("about").style.display = "";
   document.getElementById("currentStandings").style.display = "none";
   document.getElementById("currentMatchInformation").style.display = "none";
