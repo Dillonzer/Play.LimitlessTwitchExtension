@@ -84,3 +84,9 @@
     clear: both;
     text-align: center;
   }
+
+  #currentStandings {
+    width: 700px;
+    height: 560px;
+    overflow: auto;
+  }

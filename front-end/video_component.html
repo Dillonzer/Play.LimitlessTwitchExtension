@@ -8,7 +8,7 @@
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#">Current Standings</a>
+        <a href="#" onclick="openStandings()">Current Standings</a>
         <a href="#">Current Match Information</a>
         <a href="#">Streamer's Matches</a>
         <a href="#" onclick="openAbout()">About Extension</a>
@@ -31,7 +31,11 @@
             </div>
         </div>
         <div id="content">
-            <div id="currentStandings"></div>
+            <div id="currentStandings">
+                <table id="standingsTable">
+
+                </table>
+            </div>
             <div id="currentMatchInformation" style="display: none;"></div>
             <div id="streamersMatches" style="display: none;"></div>
             <div id="about" style="display: none;">
