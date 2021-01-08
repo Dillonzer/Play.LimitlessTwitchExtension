@@ -83,6 +83,8 @@ function openStandings()
 {
   document.getElementById("currentStandings").style.display = "";
   document.getElementById("currentMatchInformation").style.display = "none";
+  document.getElementById("droppedout").style.display = "none";    
+  document.getElementById("nostandings").style.display = "none";   
 
   getStandings()
 }
@@ -126,6 +128,9 @@ function getStandings()
           $("#standingsTable tr").remove(); 
           createStandings()
       }
+    },
+    error: function() {
+      showNoStandings()
     }
   })
 }
@@ -183,6 +188,15 @@ function createStandings()
       }
     }
   }
+}
+
+function showNoStandings()
+{
+  document.getElementById("currentStandings").style.display = "none";
+  document.getElementById("currentMatchInformation").style.display = "none";
+  document.getElementById("droppedout").style.display = "none";    
+  document.getElementById("nostandings").style.display = "";     
+  document.getElementById("nomatches").style.display = "none";  
 }
 
 function setTournamentInformation()
@@ -293,16 +307,34 @@ var updateInformation = function() {
 
 function openMatchInformation()
 {  
-  document.getElementById("currentStandings").style.display = "none";
-  document.getElementById("currentMatchInformation").style.display = "";
+  if(!playerObject.Active)
+  {
+    document.getElementById("currentStandings").style.display = "none";
+    document.getElementById("currentMatchInformation").style.display = "none";
+    document.getElementById("droppedout").style.display = "";      
+    document.getElementById("nostandings").style.display = "none";   
+    document.getElementById("nomatches").style.display = "none";  
+  }
+  else
+  {
+    document.getElementById("currentStandings").style.display = "none";
+    document.getElementById("currentMatchInformation").style.display = "";
+    document.getElementById("droppedout").style.display = "none";     
+    document.getElementById("nostandings").style.display = "none";    
+    document.getElementById("nomatches").style.display = "none";  
 
-  getMatchInformation()
+    getMatchInformation()
+  }
+
 }
 
 function getMatchInformation()
 {
   $('.decklistImagesForMatches').remove();
-  if(typeof matchObject != 'undefined')
+  document.getElementById("playersMatchUsername").textContent = null
+  document.getElementById("opponentsMatchUsername").textContent = null
+
+  if(typeof matchObject != 'undefined' && matchObject != "")
   {
     document.getElementById("playersMatchUsername").textContent = playerObject.Name
     document.getElementById("opponentsMatchUsername").textContent = opponentObject.Name
@@ -356,6 +388,15 @@ function getMatchInformation()
       createDecklistTable(opponentObject.Decklist.Energy, "opponentsEnergy", "Energy")
       
     }
+  }
+  else
+  {
+    document.getElementById("currentStandings").style.display = "none";
+    document.getElementById("currentMatchInformation").style.display = "none";
+    document.getElementById("droppedout").style.display = "none";     
+    document.getElementById("nostandings").style.display = "none";    
+    document.getElementById("nomatches").style.display = "";  
+
   }
 }
 
