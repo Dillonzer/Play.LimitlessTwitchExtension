@@ -49,7 +49,7 @@
 
 #content {
   width: 1000px;
-  height: 560px;
+  height: 500px;
   overflow: auto;
   clear: both;
   text-align: center;
@@ -58,4 +58,10 @@
 
 #standingsTable {
   margin: 0 auto 0 auto;  
+}
+
+.decklist {
+  width: 33%; 
+  float: left;
+  font-size: medium;
 }

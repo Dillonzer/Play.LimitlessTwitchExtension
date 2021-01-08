@@ -72,7 +72,6 @@ function configureExtension() {
       };
       
       $.ajax(settings).done(function (response) {
-        console.log(response)
         tournamentId = response.tournamentID;
         playerName = response.playerID;
 
@@ -154,7 +153,14 @@ function createStandings()
         for(let image in element[key])
         {
           var img = document.createElement("img");
-          img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+element[key][image]+".png"
+          if(element[key][image] === "substitute")
+          {
+            img.src = "https://play.limitlesstcg.com/img/"+element[key][image]+".png"
+          }
+          else
+          {         
+            img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+element[key][image]+".png"
+          }
           cell.appendChild(img)
           
         }
@@ -218,10 +224,10 @@ var timerFunction = function() {
 
     document.getElementById("roundTimer").textContent = minutes + ":" + stringSeconds
     
-    if (timeleft < 0) {
+    if (timeleft <= 0) {
       clearInterval(timerFunction);    
       document.getElementById("roundTimer").textContent = "ROUND OVER"
-      setInterval(updateInformation, 1000)
+      updateInformation()
     }
   }
   
@@ -241,22 +247,124 @@ var updateInformation = function() {
     {
       tournamentObject.Round = response.tournament.round
       tournamentObject.Ongoing = response.tournament.ongoing
-      tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
-      if(typeof response.match.opponent.deck !== 'undefined')
+      if(response.tournament.roundEnd != null)
       {
-        decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
-        opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
+        tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
       }
-      else
+      if(response.match != null)
       {
-        opponentObject = new Player(response.match.opponent.name,"","","")
+        if(typeof response.match.opponent.deck !== 'undefined')
+        {
+          decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
+          opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
+        }
+        else
+        {
+          opponentObject = new Player(response.match.opponent.name,"","","")
+        }
+        
+        matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
       }
       playerObject.Record = response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
       playerObject.Active = response.player.active
-      matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
       updatePlayerInformation()
-      setInterval(timerFunction, 1000)
-      clearInterval(updateInformation)
+      if(response.tournament.roundEnd != null)
+      {
+        tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
+        setInterval(timerFunction, 1000)
+      }
+      else
+      {        
+        document.getElementById("roundTimer").textContent = "NO ROUND TIMER ANYMORE"
+      }
+      //clearInterval(updateInformation)
     }
   });
+}
+
+function openMatchInformation()
+{  
+  document.getElementById("currentStandings").style.display = "none";
+  document.getElementById("currentMatchInformation").style.display = "";
+
+  getMatchInformation()
+}
+
+function getMatchInformation()
+{
+  if(typeof matchObject != 'undefined')
+  {
+    document.getElementById("playersMatchUsername").textContent = playerObject.Name
+    document.getElementById("opponentsMatchUsername").textContent = opponentObject.Name
+
+    if(typeof playerObject.Decklist != 'undefined')
+    {
+      for(image in playerObject.Icons)
+      {
+        var img = document.createElement("img");
+        img.style.paddingLeft = "5px"
+        if(playerObject.Icons[image] === "substitute")
+        {
+          img.src = "https://play.limitlesstcg.com/img/"+playerObject.Icons[image]+".png"
+        }
+        else
+        {         
+          img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+playerObject.Icons[image]+".png"
+        }
+
+        document.getElementById("playersMatchUsername").appendChild(img)
+
+      }
+      createDecklistTable(playerObject.Decklist.Pokemon, "playersPokemon", "Pokemon")
+      createDecklistTable(playerObject.Decklist.Trainers, "playersTrainers", "Trainers")
+      createDecklistTable(playerObject.Decklist.Energy, "playersEnergy", "Energy")
+    }
+
+    if(typeof opponentObject.Decklist != 'undefined')
+    {
+      
+      for(image in opponentObject.Icons)
+      {
+        var img = document.createElement("img");
+        img.style.paddingLeft = "5px"
+        if(opponentObject.Icons[image] === "substitute")
+        {
+          img.src = "https://play.limitlesstcg.com/img/"+opponentObject.Icons[image]+".png"
+        }
+        else
+        {         
+          img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+opponentObject.Icons[image]+".png"
+        }
+
+        document.getElementById("opponentsMatchUsername").appendChild(img)
+
+      }
+      
+      createDecklistTable(opponentObject.Decklist.Pokemon, "opponentsPokemon", "Pokemon")
+      createDecklistTable(opponentObject.Decklist.Trainers, "opponentsTrainers", "Trainers")
+      createDecklistTable(opponentObject.Decklist.Energy, "opponentsEnergy", "Energy")
+      
+    }
+  }
+}
+
+function createDecklistTable(pokemon, tableName, title)
+{
+  let table = document.getElementById(tableName)
+  let titles = [title]
+  let thead = table.createTHead();
+  let row = thead.insertRow();
+  for (let key of titles) {
+    let th = document.createElement("th");
+    let text = document.createTextNode(key);
+    th.appendChild(text);
+    row.appendChild(th);
+  }
+  
+  for (let element of pokemon) {
+    let row = table.insertRow();
+    let text = document.createTextNode(element.count+" - "+element.name+" ("+element.set+" "+element.number+")")
+    let cell = row.insertCell();
+    cell.appendChild(text);
+  }
 }

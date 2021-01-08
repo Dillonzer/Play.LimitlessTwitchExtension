@@ -13,7 +13,7 @@
             <a href="#" onclick="openStandings()" class="navLink">Standings</a>
         </div>
         <div>
-            <a href="#" class="navLink" style="padding-left: 10px;">Match Information</a>
+            <a href="#" onclick="openMatchInformation()" class="navLink" style="padding-left: 10px;">Match Information</a>
         </div>
         
         <img id="dropStatus"/>
@@ -31,14 +31,42 @@
                     <td><img id="format"></img></td>
                 </tr>
             </table>
-            <p id="roundTimer">00:00</p>
+            <p id="roundTimer"></p>
         </div>
     </div>
     <div id="content">
         <div id="currentStandings">
             <table id="standingsTable"></table>
         </div>
-        <div id="currentMatchInformation" style="display: none;"></div>
+        <div id="currentMatchInformation" style="display: none;">
+            <div id="streamer" style="width: 50%; float: left;">
+                <div id="playersMatchName">
+                    <p id="playersMatchUsername"></p>
+                </div>
+                <div id="playersDeckList">
+                    <table id="playersPokemon" class="decklist" style="padding-left: 50px;">
+                    </table>
+                    <table id="playersTrainers" class="decklist">
+                    </table>
+                    <table id="playersEnergy" class="decklist">
+                    </table>
+                </div>
+            </div>
+            <div id="opponent" style="width: 50%; float: right;">
+                <div id="opponentsMatchName">
+                    <p id="opponentsMatchUsername"></p>
+                    <p id="opponentsDeckImage"></p>
+                </div>
+                <div id="opponentsDeckList"> 
+                    <table id="opponentsPokemon" class="decklist" style="padding-left: 50px;">
+                    </table>
+                    <table id="opponentsTrainers" class="decklist">
+                    </table>
+                    <table id="opponentsEnergy" class="decklist">
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
 <!--import jquery -->
