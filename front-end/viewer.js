@@ -26,10 +26,9 @@ function Decklist(pokemon, trainers, energy)
   this.Energy = energy;
 }
 
-function Standings(placing, username, name, country, points, record, deck, icons)
+function Standings(placing, name, country, points, record, deck, icons)
 {
   this.Placing = placing;
-  this.Username = username;
   this.Name = name;
   this.Country = country;
   this.Points = points;
@@ -122,7 +121,7 @@ function getStandings()
     if( data.length ) {
           for( item in data ) {
             record = data[item].record.wins + " - " + data[item].record.losses + " - " + data[item].record.ties
-              standingsObject.push(new Standings(data[item].placing, data[item].username, data[item].name, data[item].country, data[item].record.points, record, data[item].deck.name, data[item].deck.icons))
+              standingsObject.push(new Standings(data[item].placing, data[item].name, data[item].country, data[item].record.points, record, data[item].deck.name, data[item].deck.icons))
           }
           $("#standingsTable tr").remove(); 
           createStandings()
@@ -147,9 +146,9 @@ function createStandings()
   for (let element of standingsObject) {
     let row = table.insertRow();
     for (let key in element) {
+      let cell = row.insertCell();
       if(key == "Icons")
       {
-        let cell = row.insertCell();
         for(let image in element[key])
         {
           var img = document.createElement("img");
@@ -165,10 +164,21 @@ function createStandings()
           
         }
       }
+      else if (key == "Country" && element[key] != null)
+      {
+        var img = document.createElement("img");
+        img.style.paddingLeft = "5px"
+        img.src = "https://play.limitlesstcg.com/img/flags/"+element[key]+".png"
+        cell.appendChild(img)
+      } 
       else
       {
-        let cell = row.insertCell();
-        let text = document.createTextNode(element[key]);
+        let text = document.createTextNode("");
+        if(element[key] != null)
+        {
+          text = document.createTextNode(element[key]);
+        }
+        
         cell.appendChild(text);
       }
     }
@@ -277,7 +287,6 @@ var updateInformation = function() {
       {        
         document.getElementById("roundTimer").textContent = "NO ROUND TIMER ANYMORE"
       }
-      //clearInterval(updateInformation)
     }
   });
 }
@@ -292,6 +301,7 @@ function openMatchInformation()
 
 function getMatchInformation()
 {
+  $('.decklistImagesForMatches').remove();
   if(typeof matchObject != 'undefined')
   {
     document.getElementById("playersMatchUsername").textContent = playerObject.Name
@@ -302,6 +312,7 @@ function getMatchInformation()
       for(image in playerObject.Icons)
       {
         var img = document.createElement("img");
+        img.className = "decklistImagesForMatches"
         img.style.paddingLeft = "5px"
         if(playerObject.Icons[image] === "substitute")
         {
@@ -312,7 +323,7 @@ function getMatchInformation()
           img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+playerObject.Icons[image]+".png"
         }
 
-        document.getElementById("playersMatchUsername").appendChild(img)
+        document.getElementById("playersMatchLogo").appendChild(img)
 
       }
       createDecklistTable(playerObject.Decklist.Pokemon, "playersPokemon", "Pokemon")
@@ -321,11 +332,11 @@ function getMatchInformation()
     }
 
     if(typeof opponentObject.Decklist != 'undefined')
-    {
-      
+    {      
       for(image in opponentObject.Icons)
       {
         var img = document.createElement("img");
+        img.className = "decklistImagesForMatches"
         img.style.paddingLeft = "5px"
         if(opponentObject.Icons[image] === "substitute")
         {
@@ -336,7 +347,7 @@ function getMatchInformation()
           img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+opponentObject.Icons[image]+".png"
         }
 
-        document.getElementById("opponentsMatchUsername").appendChild(img)
+        document.getElementById("opponentsMatchLogo").appendChild(img)
 
       }
       
@@ -349,7 +360,8 @@ function getMatchInformation()
 }
 
 function createDecklistTable(pokemon, tableName, title)
-{
+{  
+  $("#"+tableName+" tr").remove(); 
   let table = document.getElementById(tableName)
   let titles = [title]
   let thead = table.createTHead();
