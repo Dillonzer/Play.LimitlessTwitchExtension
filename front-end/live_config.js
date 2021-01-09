@@ -7,25 +7,33 @@ window.Twitch.ext.onAuthorized((auth) => {
   channelId = auth.channelId
 });
 
-$(function(){
-  $("#form").submit(function(e){
-      e.preventDefault()
+window.onload = function()
+{
+  EventHandlers()   
+}
 
-      var username = $("#playerName").val()      
-      var tournament = $("#tournamentId").val()
+function EventHandlers() {  
+  document.getElementById("loadTournaments").addEventListener("click",function() {LoadTournaments()})
+  document.getElementById("submit").addEventListener("click",function() {Submit()})
+}
 
-      var settings = {
-        "url": "https://dev-ptcg-api.herokuapp.com/playlimitless/upsert/"+tournament+"/"+username+"/"+channelId,
-        "method": "POST",
-        "timeout": 0,
-      };
-      
-      $.ajax(settings).done(function (response) {
-      });
-  })
-})
+function Submit() {
+  var username = $("#playerName").val()      
+  var tournament = $("#tournamentId").val()
+
+  var settings = {
+    "url": "https://dev-ptcg-api.herokuapp.com/playlimitless/upsert/"+tournament+"/"+username+"/"+channelId,
+    "method": "POST",
+    "timeout": 0,
+  };
+  
+  $.ajax(settings).done(function (response) {
+    document.getElementById("success").textContent = "SUCCESS!"
+  });
+}
 
 function LoadTournaments(){
+  document.getElementById("success").textContent = ""
   var username = $("#playerName").val()  
   var select = $('#tournamentId');
   

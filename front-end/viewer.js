@@ -63,8 +63,15 @@ twitch.onAuthorized((auth) => {
 
 });
 
-function EventHandlers() {
+window.onload = function()
+{
+  EventHandlers()   
+}
 
+function EventHandlers() {
+    document.getElementById("standingsLink").addEventListener("click",function() {openStandings()})
+    document.getElementById("matchOpenLink").addEventListener("click",function() {openMatchInformation()})
+    document.getElementById("manualRefresh").addEventListener("click",function() {configureExtension()})
 }
 
 function configureExtension() {
