@@ -63,6 +63,10 @@ twitch.onAuthorized((auth) => {
 
 });
 
+function EventHandlers() {
+
+}
+
 function configureExtension() {
   $.ajax({
     type: "GET",

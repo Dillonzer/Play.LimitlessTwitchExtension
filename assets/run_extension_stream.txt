@@ -1,0 +1,1 @@
+ffmpeg -nostdin -framerate 15 -re -loop 1 -i screenshot.png -f flv -vcodec libx264 -pix_fmt yuv420p -preset slow -r 15 -g 30 "rtmp://live-fra.twitch.tv/app/live_511189065_kfjVjcLBbBVFRewr3KNZMZJdBmItiF"
