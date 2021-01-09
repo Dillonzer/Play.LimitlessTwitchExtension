@@ -41,10 +41,17 @@
   color: white;
   padding-right: 10px;
   height: 100px;
+  width: 20%;
+}
+
+#playerName {
+  align-content: right;
+  text-align: right;
 }
 
 #playerRecord {
-  padding-left: 50px;
+  align-content: right;
+  text-align: right;
 }
 
 #content {

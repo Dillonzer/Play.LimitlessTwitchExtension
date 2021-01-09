@@ -1,4 +1,4 @@
-var token, userId, channelId, tournamentId, playerName;
+var token, userId, channelId, tournamentId, playerName, channelHasTournament;
 
 function Tournament(name, organizer, format, round)
 {
@@ -64,29 +64,42 @@ twitch.onAuthorized((auth) => {
 });
 
 function configureExtension() {
-    var settings = {
-        "url": "https://dev-ptcg-api.herokuapp.com/playlimitless/values/"+channelId,
-        "method": "GET",
-        "timeout": 0,
-      };
-      
-      $.ajax(settings).done(function (response) {
-        tournamentId = response.tournamentID;
-        playerName = response.playerID;
+  $.ajax({
+    type: "GET",
+    url: "https://dev-ptcg-api.herokuapp.com/playlimitless/values/"+channelId,
+    success: function(data) {
+      tournamentId = data.tournamentID;
+      playerName = data.playerID;
 
-        getTournamentInformation()
-        updateInformation()
-      }); 
+      if(typeof tournamentId != 'undefined')
+      {
+        channelHasTournament = true;
+      }
+      else
+      {        
+        channelHasTournament = false;
+      }
+
+      getTournamentInformation()
+      updateInformation()
+    },
+    error: function() {
+      channelHasTournament = false;
+    }
+  })
 }
 
 function openStandings()
 {
-  document.getElementById("currentStandings").style.display = "";
-  document.getElementById("currentMatchInformation").style.display = "none";
-  document.getElementById("droppedout").style.display = "none";    
-  document.getElementById("nostandings").style.display = "none";   
+  if(channelHasTournament)
+  {
+    document.getElementById("currentStandings").style.display = "";
+    document.getElementById("currentMatchInformation").style.display = "none";
+    document.getElementById("droppedout").style.display = "none";    
+    document.getElementById("nostandings").style.display = "none";   
 
-  getStandings()
+    getStandings()
+  }
 }
 
 function getTournamentInformation() {
@@ -138,7 +151,7 @@ function getStandings()
 function createStandings()
 {
   let table = document.getElementById("standingsTable")
-  let titles = ["Placing", "Username", "Name", "Country", "Points", "Record", "Deck", ""]
+  let titles = ["Placing", "Name", "Country", "Points", "Record", "Deck", ""]
   let thead = table.createTHead();
   let row = thead.insertRow();
   for (let key of titles) {
@@ -232,6 +245,7 @@ var timerFunction = function() {
   {
     var now = new Date().getTime();
     var roundEnd = tournamentObject.RoundEnd
+    var currentRound = tournamentObject.Round
     var timeleft = roundEnd - now;
     
     var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
@@ -246,7 +260,7 @@ var timerFunction = function() {
       stringSeconds = seconds
     }
 
-    document.getElementById("roundTimer").textContent = minutes + ":" + stringSeconds
+    document.getElementById("roundTimer").textContent = "Round: " + currentRound + " Time Remaining: "+ minutes + ":" + stringSeconds
     
     if (timeleft <= 0) {
       clearInterval(timerFunction);    
@@ -295,7 +309,9 @@ var updateInformation = function() {
       if(response.tournament.roundEnd != null)
       {
         tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
-        setInterval(timerFunction, 1000)
+        setInterval(timerFunction, 1100)
+        clearInterval(updateInformation)
+        setInterval(updateInformation, 120000)
       }
       else
       {        
@@ -307,23 +323,26 @@ var updateInformation = function() {
 
 function openMatchInformation()
 {  
-  if(!playerObject.Active)
+  if(channelHasTournament)
   {
-    document.getElementById("currentStandings").style.display = "none";
-    document.getElementById("currentMatchInformation").style.display = "none";
-    document.getElementById("droppedout").style.display = "";      
-    document.getElementById("nostandings").style.display = "none";   
-    document.getElementById("nomatches").style.display = "none";  
-  }
-  else
-  {
-    document.getElementById("currentStandings").style.display = "none";
-    document.getElementById("currentMatchInformation").style.display = "";
-    document.getElementById("droppedout").style.display = "none";     
-    document.getElementById("nostandings").style.display = "none";    
-    document.getElementById("nomatches").style.display = "none";  
+    if(!playerObject.Active)
+    {
+      document.getElementById("currentStandings").style.display = "none";
+      document.getElementById("currentMatchInformation").style.display = "none";
+      document.getElementById("droppedout").style.display = "";      
+      document.getElementById("nostandings").style.display = "none";   
+      document.getElementById("nomatches").style.display = "none";  
+    }
+    else
+    {
+      document.getElementById("currentStandings").style.display = "none";
+      document.getElementById("currentMatchInformation").style.display = "";
+      document.getElementById("droppedout").style.display = "none";     
+      document.getElementById("nostandings").style.display = "none";    
+      document.getElementById("nomatches").style.display = "none";  
 
-    getMatchInformation()
+      getMatchInformation()
+    }
   }
 
 }
