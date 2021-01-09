@@ -67,9 +67,11 @@ function EventHandlers() {
     document.getElementById("standingsLink").addEventListener("click",function() {openStandings()})
     document.getElementById("matchOpenLink").addEventListener("click",function() {openMatchInformation()})
     document.getElementById("manualRefresh").addEventListener("click",function() {configureExtension()})
+    document.getElementById("aboutPageLink").addEventListener("click", function() {openAboutPage()})
 }
 
 function configureExtension() {  
+  document.getElementById("aboutPage").style.display = "none";  
   document.getElementById("currentStandings").style.display = "none";
   document.getElementById("currentMatchInformation").style.display = "";
   document.getElementById("droppedout").style.display = "none";    
@@ -100,6 +102,15 @@ function configureExtension() {
   })
 }
 
+function openAboutPage(){  
+  document.getElementById("currentStandings").style.display = "none";
+  document.getElementById("currentMatchInformation").style.display = "none";
+  document.getElementById("droppedout").style.display = "none";    
+  document.getElementById("nostandings").style.display = "none";   
+  document.getElementById("nomatches").style.display = "none";  
+  document.getElementById("aboutPage").style.display = ""; 
+}
+
 function openStandings()
 {
   if(channelHasTournament)
@@ -110,6 +121,7 @@ function openStandings()
     document.getElementById("droppedout").style.display = "none";    
     document.getElementById("nostandings").style.display = "none";   
     document.getElementById("nomatches").style.display = "none"; 
+    document.getElementById("aboutPage").style.display = "none"; 
 
   }
 }
@@ -228,7 +240,8 @@ function showNoStandings()
   document.getElementById("currentMatchInformation").style.display = "none";
   document.getElementById("droppedout").style.display = "none";    
   document.getElementById("nostandings").style.display = "";     
-  document.getElementById("nomatches").style.display = "none";  
+  document.getElementById("nomatches").style.display = "none"; 
+  document.getElementById("aboutPage").style.display = "none";  
 }
 
 function setTournamentInformation()
@@ -368,6 +381,7 @@ function openMatchInformation()
       document.getElementById("droppedout").style.display = "";      
       document.getElementById("nostandings").style.display = "none";   
       document.getElementById("nomatches").style.display = "none";  
+      document.getElementById("aboutPage").style.display = "none"; 
     }
     else
     {
@@ -376,6 +390,7 @@ function openMatchInformation()
       document.getElementById("droppedout").style.display = "none";     
       document.getElementById("nostandings").style.display = "none";    
       document.getElementById("nomatches").style.display = "none";  
+      document.getElementById("aboutPage").style.display = "none"; 
 
       getMatchInformation()
     }
