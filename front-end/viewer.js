@@ -303,9 +303,11 @@ var updateInformation = function() {
         
         matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
       }
+      
       playerObject.Record = response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
       playerObject.Active = response.player.active
       updatePlayerInformation()
+
       if(response.tournament.roundEnd != null)
       {
         tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
@@ -316,7 +318,7 @@ var updateInformation = function() {
         document.getElementById("roundTimer").textContent = "NO ROUND TIMER ANYMORE"
       }
       clearInterval(updateInformation)
-      setInterval(updateInformation, 120000)
+      setInterval(updateInformation, 30000)
       getStandings()
       getMatchInformation()
     }
