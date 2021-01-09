@@ -310,13 +310,15 @@ var updateInformation = function() {
       {
         tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
         setInterval(timerFunction, 1100)
-        clearInterval(updateInformation)
-        setInterval(updateInformation, 120000)
       }
       else
       {        
         document.getElementById("roundTimer").textContent = "NO ROUND TIMER ANYMORE"
       }
+      clearInterval(updateInformation)
+      setInterval(updateInformation, 120000)
+      getStandings()
+      getMatchInformation()
     }
   });
 }

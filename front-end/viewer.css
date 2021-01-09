@@ -77,3 +77,11 @@
   width: 50%;
   float: left;
 }
+
+tr:nth-child(even) {
+  background-color: #F9F9F9;
+}
+ 
+th { 
+  border-bottom: solid 0.25em black; 
+}
