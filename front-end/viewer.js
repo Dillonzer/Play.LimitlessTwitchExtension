@@ -69,7 +69,12 @@ function EventHandlers() {
     document.getElementById("manualRefresh").addEventListener("click",function() {configureExtension()})
 }
 
-function configureExtension() {
+function configureExtension() {  
+  document.getElementById("currentStandings").style.display = "none";
+  document.getElementById("currentMatchInformation").style.display = "";
+  document.getElementById("droppedout").style.display = "none";    
+  document.getElementById("nostandings").style.display = "none";   
+  document.getElementById("nomatches").style.display = "none"; 
   $.ajax({
     type: "GET",
     url: "https://dev-ptcg-api.herokuapp.com/playlimitless/values/"+channelId,
@@ -99,12 +104,13 @@ function openStandings()
 {
   if(channelHasTournament)
   {
+    getStandings()
     document.getElementById("currentStandings").style.display = "";
     document.getElementById("currentMatchInformation").style.display = "none";
     document.getElementById("droppedout").style.display = "none";    
     document.getElementById("nostandings").style.display = "none";   
+    document.getElementById("nomatches").style.display = "none"; 
 
-    getStandings()
   }
 }
 
@@ -125,7 +131,7 @@ function getTournamentInformation() {
     }
     else
     {
-      playerObject = new Player(response.player.name,"","","")
+      playerObject = new Player(response.player.name,undefined,undefined,undefined)
     }
 
     setTournamentInformation()
@@ -134,6 +140,7 @@ function getTournamentInformation() {
 
 function getStandings()
 {  
+  $("#standingsTable tr").remove(); 
   standingsObject = []
   $.ajax({
     type: "GET",
@@ -142,9 +149,15 @@ function getStandings()
     if( data.length ) {
           for( item in data ) {
             record = data[item].record.wins + " - " + data[item].record.losses + " - " + data[item].record.ties
+            if(typeof data[item].deck != 'undefined')
+            {
               standingsObject.push(new Standings(data[item].placing, data[item].name, data[item].country, data[item].record.points, record, data[item].deck.name, data[item].deck.icons))
+            }
+            else
+            {
+              standingsObject.push(new Standings(data[item].placing, data[item].name, data[item].country, data[item].record.points, record, "N/A", ""))
+            }
           }
-          $("#standingsTable tr").remove(); 
           createStandings()
       }
     },
@@ -221,7 +234,15 @@ function showNoStandings()
 function setTournamentInformation()
 {
   document.getElementById("tournamentName").textContent = tournamentObject.Name
-  document.getElementById("format").src = "https://play.limitlesstcg.com/img/formats/"+tournamentObject.Format.toLowerCase()+".png"
+  var imageUrl = "https://play.limitlesstcg.com/img/formats/"+tournamentObject.Format.toLowerCase()+".png"
+  checkImage(imageUrl, function(){ document.getElementById("format").src = imageUrl}, function(){ document.getElementById("format").removeAttribute = "src"} );
+}
+
+function checkImage (src, good, bad) {
+  var img = new Image();
+  img.onload = good; 
+  img.onerror = bad;
+  img. src = src;
 }
 
 function updatePlayerInformation()
@@ -266,7 +287,7 @@ var timerFunction = function() {
       stringSeconds = seconds
     }
 
-    document.getElementById("roundTimer").textContent = "Round: " + currentRound + " Time Remaining: "+ minutes + ":" + stringSeconds
+    document.getElementById("roundTimer").textContent = "Round: " + currentRound + " - "+ minutes + ":" + stringSeconds
     
     if (timeleft <= 0) {
       clearInterval(timerFunction);    
@@ -295,19 +316,24 @@ var updateInformation = function() {
       {
         tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
       }
-      if(response.match != null)
+      if(response.match != null && typeof response.match.opponent != 'undefined')
       {
-        if(typeof response.match.opponent.deck !== 'undefined')
-        {
-          decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
-          opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
-        }
-        else
-        {
-          opponentObject = new Player(response.match.opponent.name,"","","")
-        }
+          if(typeof response.match.opponent.deck != 'undefined')
+          {
+            decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
+            opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
+          }
+          else
+          {
+            opponentObject = new Player(response.match.opponent.name,undefined,undefined,undefined)
+          }
+          
+          matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
         
-        matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
+      }
+      else
+      {
+        matchObject = undefined
       }
       
       playerObject.Record = response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
@@ -321,7 +347,7 @@ var updateInformation = function() {
       }
       else
       {        
-        document.getElementById("roundTimer").textContent = "NO ROUND TIMER ANYMORE"
+        document.getElementById("roundTimer").textContent = "Round " + tournamentObject.Round
       }
       clearInterval(updateInformation)
       setInterval(updateInformation, 30000)
@@ -359,6 +385,12 @@ function openMatchInformation()
 
 function getMatchInformation()
 {
+  $("#opponentsPokemon tr").remove(); 
+  $("#opponentsTrainers tr").remove(); 
+  $("#opponentsEnergy tr").remove(); 
+  $("#playersPokemon tr").remove(); 
+  $("#playersTrainers tr").remove(); 
+  $("#playersEnergy tr").remove(); 
   $('.decklistImagesForMatches').remove();
   document.getElementById("playersMatchUsername").textContent = null
   document.getElementById("opponentsMatchUsername").textContent = null
@@ -420,11 +452,23 @@ function getMatchInformation()
   }
   else
   {
+    if(playerObject.Active)
+    {
     document.getElementById("currentStandings").style.display = "none";
-    document.getElementById("currentMatchInformation").style.display = "none";
+    document.getElementById("currentMatchInformation").style.display = "none"; 
+    document.getElementById("nostandings").style.display = "none";   
     document.getElementById("droppedout").style.display = "none";     
-    document.getElementById("nostandings").style.display = "none";    
     document.getElementById("nomatches").style.display = "";  
+    }
+    else
+    {
+      document.getElementById("currentStandings").style.display = "none";
+      document.getElementById("currentMatchInformation").style.display = "none"; 
+      document.getElementById("nostandings").style.display = "none";   
+      document.getElementById("droppedout").style.display = "";     
+      document.getElementById("nomatches").style.display = "none";  
+
+    }
 
   }
 }
