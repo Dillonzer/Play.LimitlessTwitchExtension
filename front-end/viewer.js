@@ -79,7 +79,7 @@ function configureExtension() {
   document.getElementById("nomatches").style.display = "none"; 
   $.ajax({
     type: "GET",
-    url: "https://dev-ptcg-api.herokuapp.com/playlimitless/values/"+channelId,
+    url: "https://ptcg-api.herokuapp.com/playlimitless/values/"+channelId,
     success: function(data) {
       tournamentId = data.tournamentID;
       playerName = data.playerID;

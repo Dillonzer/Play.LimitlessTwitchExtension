@@ -22,7 +22,7 @@ function Submit() {
   var tournament = $("#tournamentId").val()
 
   var settings = {
-    "url": "https://dev-ptcg-api.herokuapp.com/playlimitless/upsert/"+tournament+"/"+username+"/"+channelId,
+    "url": "https://ptcg-api.herokuapp.com/playlimitless/upsert/"+tournament+"/"+username+"/"+channelId,
     "method": "POST",
     "timeout": 0,
   };
