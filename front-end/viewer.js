@@ -71,12 +71,6 @@ function EventHandlers() {
 }
 
 function configureExtension() {  
-  document.getElementById("aboutPage").style.display = "none";  
-  document.getElementById("currentStandings").style.display = "none";
-  document.getElementById("currentMatchInformation").style.display = "";
-  document.getElementById("droppedout").style.display = "none";    
-  document.getElementById("nostandings").style.display = "none";   
-  document.getElementById("nomatches").style.display = "none"; 
   $.ajax({
     type: "GET",
     url: "https://ptcg-api.herokuapp.com/playlimitless/values/"+channelId,
@@ -305,7 +299,7 @@ var timerFunction = function() {
     if (timeleft <= 0) {
       clearInterval(timerFunction);    
       document.getElementById("roundTimer").textContent = "ROUND OVER"
-      updateInformation()
+      //updateInformation() - Robin didn't want this
     }
   }
   
@@ -320,53 +314,48 @@ var updateInformation = function() {
   
   $.ajax(settings).done(function (response) {
     
-    var currentRound = tournamentObject.Round
-    if(currentRound != response.tournament.round)
+    tournamentObject.Round = response.tournament.round
+    tournamentObject.Ongoing = response.tournament.ongoing
+    if(response.tournament.roundEnd != null)
     {
-      tournamentObject.Round = response.tournament.round
-      tournamentObject.Ongoing = response.tournament.ongoing
-      if(response.tournament.roundEnd != null)
-      {
-        tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
-      }
-      if(response.match != null && typeof response.match.opponent != 'undefined')
-      {
-          if(typeof response.match.opponent.deck != 'undefined')
-          {
-            decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
-            opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
-          }
-          else
-          {
-            opponentObject = new Player(response.match.opponent.name,undefined,undefined,undefined)
-          }
-          
-          matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
-        
-      }
-      else
-      {
-        matchObject = undefined
-      }
-      
-      playerObject.Record = response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
-      playerObject.Active = response.player.active
-      updatePlayerInformation()
-
-      if(response.tournament.roundEnd != null)
-      {
-        tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
-        setInterval(timerFunction, 1100)
-      }
-      else
-      {        
-        document.getElementById("roundTimer").textContent = "Round " + tournamentObject.Round
-      }
-      clearInterval(updateInformation)
-      setInterval(updateInformation, 30000)
-      getStandings()
-      getMatchInformation()
+      tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
     }
+    if(response.match != null && typeof response.match.opponent != 'undefined')
+    {
+        if(typeof response.match.opponent.deck != 'undefined')
+        {
+          decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
+          opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
+        }
+        else
+        {
+          opponentObject = new Player(response.match.opponent.name,undefined,undefined,undefined)
+        }
+        
+        matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
+      
+    }
+    else
+    {
+      matchObject = undefined
+    }
+    
+    playerObject.Record = response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
+    playerObject.Active = response.player.active
+    updatePlayerInformation()
+
+    if(response.tournament.roundEnd != null)
+    {
+      tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
+      clearInterval(timerFunction)
+      setInterval(timerFunction, 1100)
+    }
+    else
+    {        
+      document.getElementById("roundTimer").textContent = "Round " + tournamentObject.Round
+    }
+    getStandings()
+    getMatchInformation()
   });
 }
 
@@ -374,6 +363,7 @@ function openMatchInformation()
 {  
   if(channelHasTournament)
   {
+    updateInformation()
     if(!playerObject.Active)
     {
       document.getElementById("currentStandings").style.display = "none";
@@ -412,8 +402,8 @@ function getMatchInformation()
 
   if(typeof matchObject != 'undefined' && matchObject != "")
   {
-    document.getElementById("playersMatchUsername").textContent = playerObject.Name
-    document.getElementById("opponentsMatchUsername").textContent = opponentObject.Name
+    document.getElementById("playersMatchUsername").textContent = playerObject.Name + " - Score: " + matchObject.PlayerScore
+    document.getElementById("opponentsMatchUsername").textContent = opponentObject.Name + " - Score: " + matchObject.OppScore
 
     if(typeof playerObject.Decklist != 'undefined')
     {
@@ -464,26 +454,44 @@ function getMatchInformation()
       createDecklistTable(opponentObject.Decklist.Energy, "opponentsEnergy", "Energy")
       
     }
+
+    if(document.getElementById("droppedout").getAttribute("style")==null ||
+      document.getElementById("nomatches").getAttribute("style")==null)
+      {
+        document.getElementById("currentStandings").style.display = "none";
+        document.getElementById("currentMatchInformation").style.display = ""; 
+        document.getElementById("nostandings").style.display = "none";   
+        document.getElementById("droppedout").style.display = "none";     
+        document.getElementById("nomatches").style.display = "none";  
+        document.getElementById("aboutPage").style.display = "none";  
+      }
+
   }
   else
   {
-    if(playerObject.Active)
-    {
-    document.getElementById("currentStandings").style.display = "none";
-    document.getElementById("currentMatchInformation").style.display = "none"; 
-    document.getElementById("nostandings").style.display = "none";   
-    document.getElementById("droppedout").style.display = "none";     
-    document.getElementById("nomatches").style.display = "";  
-    }
-    else
-    {
-      document.getElementById("currentStandings").style.display = "none";
-      document.getElementById("currentMatchInformation").style.display = "none"; 
-      document.getElementById("nostandings").style.display = "none";   
-      document.getElementById("droppedout").style.display = "";     
-      document.getElementById("nomatches").style.display = "none";  
-
-    }
+    if(document.getElementById("currentMatchInformation").getAttribute("style")==null ||
+      document.getElementById("droppedout").getAttribute("style")==null ||
+      document.getElementById("nomatches").getAttribute("style")==null)
+      {
+        if(playerObject.Active)
+        {
+          document.getElementById("currentStandings").style.display = "none";
+          document.getElementById("currentMatchInformation").style.display = "none"; 
+          document.getElementById("nostandings").style.display = "none";   
+          document.getElementById("droppedout").style.display = "none";     
+          document.getElementById("nomatches").style.display = "";  
+          document.getElementById("aboutPage").style.display = "none";  
+        }
+        else
+        {
+          document.getElementById("currentStandings").style.display = "none";
+          document.getElementById("currentMatchInformation").style.display = "none"; 
+          document.getElementById("nostandings").style.display = "none";   
+          document.getElementById("droppedout").style.display = "";     
+          document.getElementById("nomatches").style.display = "none";  
+          document.getElementById("aboutPage").style.display = "none";  
+        }
+      }
 
   }
 }
@@ -503,8 +511,16 @@ function createDecklistTable(pokemon, tableName, title)
   }
   
   for (let element of pokemon) {
+    let text = document.createTextNode("")
     let row = table.insertRow();
-    let text = document.createTextNode(element.count+" - "+element.name+" ("+element.set+" "+element.number+")")
+    if(title == "Pokemon")
+    {
+       text = document.createTextNode(element.count+" - "+element.name+" ("+element.set+" "+element.number+")")
+    }
+    else
+    {
+      text = document.createTextNode(element.count+" - "+element.name)
+    }
     let cell = row.insertCell();
     cell.appendChild(text);
   }

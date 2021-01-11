@@ -7,7 +7,7 @@
 <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: white; font-size: larger;">
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
       
-    <img src="images/limitless.png" id="manualRefresh" style="float: left; padding-top: 10px;">
+    <img src="images/limitless.png" style="float: left; padding-top: 10px; padding-right: 10px;">
     <div id="headerDiv">
         <div>
             <a href="#" id="standingsLink" class="navLink">Standings</a>
@@ -34,7 +34,11 @@
                     <td><img id="format"/></img></td>
                 </tr>
             </table>
+            <div>
+                <img id="manualRefresh" title="Refresh" style="width: 90px; height: 75px; float: right;" src="images/refresh.png"/>
             <p id="roundTimer"></p>
+            </div>
+            
         </div>
     </div>
     <div id="content">
@@ -81,16 +85,17 @@
             <img src="images/dropped-out-stamp.png" style="vertical-align: center;"/>
         </div>
         <div id="aboutPage" style="display: none">
-            <h3>Play.Limitless Twitch Extension</h3>
-            <p>This extension was created by Dillonzer with a huge shout-out to Robin and the Limitless TCG team for creating Play.Limitless and allowing myself to access the data.</p>
+            <h3>Play.LimitlessTCG Twitch Extension</h3>
+            <p>This extension was created by Dillonzer with a huge shout-out to Robin and the LimitlessTCG team for creating Play.LimitlessTCG and allowing myself to access the data.</p>
             <h4>How to Use</h4>
             <p>The extension is hopefully self explanatory but there are some hidden features.</p>
             <ul style="text-align:left">
-                <li>If the streamer changes the tournament on their end, you can click the Limitless Logo in the top left to refresh the page.</li>
+                <li>The data currently does not auto-refresh due to wanting to limit loads on the Server. To refresh, please click the little refresh button near the Round Timer.</li>
+                <li>The data will also refresh everytime you go to a new area of the Extension (ie. Clicking on Standings / Match Information)</li>
                 <li>The little icon near the Streamer Name indicates if the streamer is still playing in this tournament of if they have dropped.</li>
                 <li>The little icon near the Tournament Name indicates if the tournament is currently ongoing or not.</li>
             </ul>
-            <p>Thanks for using the extension and for using Play.Limitless!</p>            
+            <p>Thanks for using the extension and for using Play.LimitlessTCG!</p>            
             <img src="images/limitless.png"/>
         </div>
     </div>
