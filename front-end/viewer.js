@@ -258,18 +258,22 @@ function updatePlayerInformation()
   if(playerObject.Active)
   {
     document.getElementById("dropStatus").src = "./images/green_light.png"
+    document.getElementById("dropStatus").title = "Active Player"
   }
   else
   {
     document.getElementById("dropStatus").src = "./images/red_light.png"
+    document.getElementById("dropStatus").title = "Dropped"
   }
   if(tournamentObject.Ongoing)
   {
     document.getElementById("tournamentOngoing").src = "./images/green_light.png"
+    document.getElementById("tournamentOngoing").title = "On-going Tournament"
   }
   else
   {
     document.getElementById("tournamentOngoing").src = "./images/red_light.png"
+    document.getElementById("tournamentOngoing").title = "Tournament is currently not running"
   }
   document.getElementById("playerRecord").textContent = playerObject.Record
 }
@@ -415,10 +419,12 @@ function getMatchInformation()
         if(playerObject.Icons[image] === "substitute")
         {
           img.src = "https://play.limitlesstcg.com/img/"+playerObject.Icons[image]+".png"
+          img.title = playerObject.Deck
         }
         else
         {         
           img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+playerObject.Icons[image]+".png"
+          img.title = playerObject.Deck
         }
 
         document.getElementById("playersMatchLogo").appendChild(img)
@@ -439,10 +445,12 @@ function getMatchInformation()
         if(opponentObject.Icons[image] === "substitute")
         {
           img.src = "https://play.limitlesstcg.com/img/"+opponentObject.Icons[image]+".png"
+          img.title = opponentObject.Deck
         }
         else
         {         
           img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+opponentObject.Icons[image]+".png"
+          img.title = opponentObject.Deck
         }
 
         document.getElementById("opponentsMatchLogo").appendChild(img)
