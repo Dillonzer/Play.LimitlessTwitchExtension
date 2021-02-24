@@ -69,10 +69,32 @@
       "orientation": "Portrait",
       "type": "component",
       "viewerType": "Broadcaster"
+    },
+    {
+      "channelId": "56083652",
+      "configurationAnchor": "panel",
+      "displayChannelName": "Dillonzer",
+      "features": {
+        "isBitsEnabled": false,
+        "isChatEnabled": false,
+        "isSubscriptionStatusAvailable": false
+      },
+      "frameSize": {
+        "width": 1280,
+        "height": 720
+      },
+      "id": "4",
+      "isPopout": false,
+      "label": "",
+      "linked": false,
+      "linkedUserId": "",
+      "orientation": "Portrait",
+      "type": "panel",
+      "viewerType": "Broadcaster"
     }
   ],
   "manifest": {
-    "anchor": "component",
+    "anchor": "panel",
     "assetUrls": [],
     "authorName": "Dillonzer",
     "bitsEnabled": false,
@@ -92,13 +114,13 @@
     "installationCount": -42,
     "liveConfigUrl": "https://localhost:8080/live_config.html",
     "name": "Play.LimitlessTCG",
-    "panelHeight": 0,
+    "panelHeight": 500,
     "privacyPolicyUrl": "",
     "requestIdentityLink": false,
     "requiredBroadcasterAbilities": [],
     "screenshotUrls": [
-      "https://extensions-discovery-images.twitch.tv/xb61ayc9z654d0nomoe3z6eo7cglfh/0.0.1/screenshot873cc959-ad83-43b4-a14e-726957206070",
-      "https://extensions-discovery-images.twitch.tv/xb61ayc9z654d0nomoe3z6eo7cglfh/0.0.1/screenshotb9277e9f-ab85-46c4-9df4-3a18762cd616"
+      "https://extensions-discovery-images.twitch.tv/xb61ayc9z654d0nomoe3z6eo7cglfh/0.0.1/screenshota6f7d957-4a04-4cb9-9e26-516042165606",
+      "https://extensions-discovery-images.twitch.tv/xb61ayc9z654d0nomoe3z6eo7cglfh/0.0.1/screenshot0bf49b78-cafc-49e1-b74f-3a6ce4f6c960"
     ],
     "sku": "",
     "state": "Testing",
@@ -106,13 +128,19 @@
     "summary": "An easy way for viewers to look into the tournament you are playing on Play.Limitless!",
     "supportEmail": "dillonbast@gmail.com",
     "vendorCode": "",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "viewerSummary": "Look at the Tournament Standings and current Streamers Status in the Tournament!",
-    "viewerUrl": "",
+    "viewerUrl": "https://localhost:8080/panel.html",
     "viewerUrls": {
+      "panel": "https://localhost:8080/panel.html",
       "component": "https://localhost:8080/video_component.html"
     },
     "views": {
+      "panel": {
+        "viewerUrl": "https://localhost:8080/panel.html",
+        "height": 500,
+        "canLinkExternalContent": false
+      },
       "component": {
         "viewerUrl": "https://localhost:8080/video_component.html",
         "aspectWidth": 0,

@@ -176,7 +176,61 @@ function getStandings()
 function createStandings()
 {
   let table = document.getElementById("standingsTable")
-  let titles = ["Placing", "Name", "Country", "Points", "Record", "Deck", ""]
+  if(!table.classList.contains("m_standingsTable"))
+  {
+    let titles = ["Placing", "Name", "Country", "Points", "Record", "Deck", ""]
+    let thead = table.createTHead();
+    let row = thead.insertRow();
+    for (let key of titles) {
+      let th = document.createElement("th");
+      let text = document.createTextNode(key);
+      th.appendChild(text);
+      row.appendChild(th);
+    }
+    
+    for (let element of standingsObject) {
+      let row = table.insertRow();
+      for (let key in element) {
+        let cell = row.insertCell();
+        if(key == "Icons")
+        {
+          for(let image in element[key])
+          {
+            var img = document.createElement("img");
+            if(element[key][image] === "substitute")
+            {
+              img.src = "https://play.limitlesstcg.com/img/"+element[key][image]+".png"
+            }
+            else
+            {         
+              img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+element[key][image]+".png"
+            }
+            cell.appendChild(img)
+            
+          }
+        }
+        else if (key == "Country" && element[key] != null)
+        {
+          var img = document.createElement("img");
+          img.style.paddingLeft = "5px"
+          img.src = "https://play.limitlesstcg.com/img/flags/"+element[key]+".png"
+          cell.appendChild(img)
+        } 
+        else
+        {
+          let text = document.createTextNode("");
+          if(element[key] != null)
+          {
+            text = document.createTextNode(element[key]);
+          }
+          
+          cell.appendChild(text);
+        }
+      }
+    }
+  }
+  else
+  {let titles = ["Placing", "Name","Points","Record","Deck"]
   let thead = table.createTHead();
   let row = thead.insertRow();
   for (let key of titles) {
@@ -189,9 +243,9 @@ function createStandings()
   for (let element of standingsObject) {
     let row = table.insertRow();
     for (let key in element) {
-      let cell = row.insertCell();
       if(key == "Icons")
       {
+        let cell = row.insertCell();
         for(let image in element[key])
         {
           var img = document.createElement("img");
@@ -207,15 +261,13 @@ function createStandings()
           
         }
       }
-      else if (key == "Country" && element[key] != null)
+      else if (key == "Country" || key == "Deck" )
       {
-        var img = document.createElement("img");
-        img.style.paddingLeft = "5px"
-        img.src = "https://play.limitlesstcg.com/img/flags/"+element[key]+".png"
-        cell.appendChild(img)
+        continue
       } 
       else
       {
+        let cell = row.insertCell();
         let text = document.createTextNode("");
         if(element[key] != null)
         {
@@ -225,6 +277,8 @@ function createStandings()
         cell.appendChild(text);
       }
     }
+  }
+    
   }
 }
 

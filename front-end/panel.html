@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Viewer Page</title>
+</head>
+<link rel="stylesheet" href="viewer.css">
+<body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: white; font-size: larger;">
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+      
+    <img src="images/limitless.png" style="float: left; padding-top: 10px; padding-right: 10px; height: 50%; width: 50%;">
+    <div id="headerDiv" class="m_headerDiv">        
+        <img id="dropStatus" class="m_dropStatus"/>
+        <div id="playerInformation" class="m_playerInformation"> 
+            <p id="playerName" class="m_playerName"></p>
+            <p id="playerRecord" class="m_playerRecord"></p>  
+        </div>
+    </div>
+    <div id="headerTournamentInformation">
+        <div id="tournamentInformation" class="tournamentInformation">
+            <img id="tournamentOngoing" class="m_tournamentOngoing" />
+            <div>
+                <img id="manualRefresh" title="Refresh" style="width: 40px; height: 35px; float: right;" src="images/refresh.png"/>
+            <p id="roundTimer" class="m_roundTimer"></p>
+            </div>
+            <table id="tournamentInfoTable" style="float:left">
+                <tr>
+                    <td><p id="tournamentName" class="m_tournamentName"></p></td>
+                    <td><img id="format"style="width: 20px; height: 20px;"/></img></td>
+                </tr>
+            </table>
+            
+        </div>
+    </div>
+    <div id="content" class="m_content">
+        <div id="currentStandings" class="m_currentStandings">
+            <table id="standingsTable" class="m_standingsTable"></table>
+        </div>
+    </div>
+
+<!--import jquery -->
+<script src="jquery.min.js" type="text/javascript"></script>
+<script src="viewer.js" type="text/javascript"></script>
+
+</body>
+</html>

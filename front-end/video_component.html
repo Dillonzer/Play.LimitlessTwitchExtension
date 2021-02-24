@@ -8,7 +8,7 @@
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
       
     <img src="images/limitless.png" style="float: left; padding-top: 10px; padding-right: 10px;">
-    <div id="headerDiv">
+    <div id="headerDiv" class="headerDiv">
         <div>
             <a href="#" id="standingsLink" class="navLink">Standings</a>
         </div>
@@ -19,31 +19,31 @@
             <a href="#" id="aboutPageLink" class="navLink" style="padding-left: 10px;">About</a>
         </div>
         
-        <img id="dropStatus"/>
-        <div id="playerInformation"> 
-            <p id="playerName"></p>
-            <p id="playerRecord"></p>  
+        <img id="dropStatus" class="dropStatus"/>
+        <div id="playerInformation" class="playerInformation"> 
+            <p id="playerName" class="playerName"></p>
+            <p id="playerRecord" class="playerRecord"></p>  
         </div>
     </div>
     <div id="headerTournamentInformation">
-        <div id="tournamentInformation">
-            <img id="tournamentOngoing" />
+        <div id="tournamentInformation" class="tournamentInformation">
+            <img id="tournamentOngoing" class="tournamentOngoing"/>
             <table id="tournamentInfoTable" style="float:left">
                 <tr>
-                    <td><p id="tournamentName"></p></td>
+                    <td><p id="tournamentName" class="tournamentName"></p></td>
                     <td><img id="format"/></img></td>
                 </tr>
             </table>
             <div>
                 <img id="manualRefresh" title="Refresh" style="width: 90px; height: 75px; float: right;" src="images/refresh.png"/>
-            <p id="roundTimer"></p>
+                <p id="roundTimer" class="roundTimer"></p>
             </div>
             
         </div>
     </div>
-    <div id="content">
-        <div id="currentStandings" style="display: none;">
-            <table id="standingsTable"></table>
+    <div id="content" class="content">
+        <div id="currentStandings" class="currentStandings" style="display: none;">
+            <table id="standingsTable" class="standingsTable"></table>
         </div>
         <div id="nostandings" style="display: none;">
             <p>Currently there are no standings available for this Tournament.</p>

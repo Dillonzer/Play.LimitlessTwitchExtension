@@ -1,0 +1,16 @@
+Via the Stream Manager (best would be done before going Live so users don't need to refresh the extension):
+- Type in your Play.LimitlessTCG Username and click Get Tournaments
+- Select the Tournament you want your viewers to see and click Submit
+
+Via the Extension:
+- To view standings of the tournament the streamer has selected, click on Standings
+- To view Match Information of the current match going on, click on Match Information
+- To read the About section of the extension, click on About
+- To refresh the data from the server, click the little Refresh button near the round timer
+
+Via Panel
+- It will only show the standings and the current player / round information.
+- To refresh the data from the server, click the little Refresh button near the round timer
+
+Change Log:
+- Added the Panel. No logic changes.
