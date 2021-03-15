@@ -101,7 +101,7 @@
     "canInstall": true,
     "configUrl": "https://localhost:8080/config.html",
     "configurationLocation": "none",
-    "description": "This extension will allow you as the Streamer to display which tournament you are playing in on Play.Limitless and display the following to your viewers:\n- Standings\n- Current Record\n- Current Matchup including your and your opponents Decklists",
+    "description": "This extension will allow you as the Streamer to display which tournament you are playing in on Play.LimitlessTCG and display the following to your viewers:\n- Standings\n- Current Record\n- Current Matchup including your and your opponents Decklists\n\nThe panel will only show Standings and Current Record.",
     "eulaTosUrl": "",
     "hasChatSupport": false,
     "iconUrl": "https://extensions-discovery-images.twitch.tv/xb61ayc9z654d0nomoe3z6eo7cglfh/0.0.1/logod88adc71-ed61-41ac-a650-e2eb94cccba8",
@@ -120,15 +120,16 @@
     "requiredBroadcasterAbilities": [],
     "screenshotUrls": [
       "https://extensions-discovery-images.twitch.tv/xb61ayc9z654d0nomoe3z6eo7cglfh/0.0.1/screenshota6f7d957-4a04-4cb9-9e26-516042165606",
-      "https://extensions-discovery-images.twitch.tv/xb61ayc9z654d0nomoe3z6eo7cglfh/0.0.1/screenshot0bf49b78-cafc-49e1-b74f-3a6ce4f6c960"
+      "https://extensions-discovery-images.twitch.tv/xb61ayc9z654d0nomoe3z6eo7cglfh/0.0.1/screenshot0bf49b78-cafc-49e1-b74f-3a6ce4f6c960",
+      "https://extensions-discovery-images.twitch.tv/xb61ayc9z654d0nomoe3z6eo7cglfh/0.0.2/screenshotb3595cf6-bbff-476b-a88a-73cd944ae8c2"
     ],
     "sku": "",
     "state": "Testing",
     "subscriptionsSupportLevel": "none",
-    "summary": "An easy way for viewers to look into the tournament you are playing on Play.Limitless!",
-    "supportEmail": "dillonbast@gmail.com",
+    "summary": "An easy way for viewers to look into the tournament you are playing on Play.LimitlessTCG!",
+    "supportEmail": "dillonzerapps@gmail.com",
     "vendorCode": "",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "viewerSummary": "Look at the Tournament Standings and current Streamers Status in the Tournament!",
     "viewerUrl": "https://localhost:8080/panel.html",
     "viewerUrls": {

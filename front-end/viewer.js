@@ -1,9 +1,8 @@
-var token, userId, channelId, tournamentId, playerName, channelHasTournament;
+var token, userId, channelId, tournamentId, playerName, channelHasTournament, channelInCasterMode;
 
-function Tournament(name, organizer, format, round)
+function Tournament(name, format, round)
 {
   this.Name = name;
-  this.Organizer = organizer;
   this.Format = format;
   this.Round = round;
   this.RoundEnd = new Date(0);
@@ -44,7 +43,16 @@ function Match(completed, playerScore, oppScore)
   this.OppScore = oppScore;
 }
 
-var tournamentObject, playerObject, opponentObject, decklistObject, matchObject
+function CasterModeMatch(completed, playerOneName, playerOneScore, playerTwoName, playerTwoScore)
+{
+  this.Completed = completed;
+  this.PlayerOneName = playerOneName;
+  this.PlayerOneScore = playerOneScore;
+  this.PlayerTwoName = playerTwoName;
+  this.PlayerTwoScore = playerTwoScore;
+}
+
+var tournamentObject, playerObject, opponentObject, decklistObject, matchObject, casterModeMatchObject
 var standingsObject = [];
 
 // so we don't have to write this out everytime 
@@ -77,6 +85,7 @@ function configureExtension() {
     success: function(data) {
       tournamentId = data.tournamentID;
       playerName = data.playerID;
+      channelInCasterMode = data.casterMode
 
       if(typeof tournamentId != 'undefined')
       {
@@ -87,6 +96,7 @@ function configureExtension() {
         channelHasTournament = false;
       }
 
+      
       getTournamentInformation()
       updateInformation()
     },
@@ -121,15 +131,54 @@ function openStandings()
 }
 
 function getTournamentInformation() {
+  url = "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId
+  if(channelInCasterMode)
+  {
+    url = "https://play.limitlesstcg.com/ext/live/tournament/"+tournamentId
+  }
+
   var settings = {
-    "url": "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId,
+    "url": url,
     "method": "GET",
     "timeout": 0,
   };
   
   $.ajax(settings).done(function (response) {
     
-    tournamentObject = new Tournament(response.tournament.name, response.tournament.organizer, response.tournament.format)
+    if(!channelInCasterMode)
+    {
+      document.getElementById("dropStatus").style.display = ""
+      tournamentObject = new Tournament(response.tournament.name, response.tournament.format)
+      if(typeof response.player.deck !== 'undefined')
+      {
+        decklistObject = new Decklist(response.player.decklist.pokemon, response.player.decklist.trainer, response.player.decklist.energy)
+        playerObject = new Player(response.player.name, response.player.deck.name, response.player.deck.icons, decklistObject)
+      }
+      else
+      {
+        playerObject = new Player(response.player.name,undefined,undefined,undefined)
+      }
+    }
+    else
+    {     
+      document.getElementById("dropStatus").style.display = "none"
+      tournamentObject = new Tournament(response.name, response.format, response.round)
+    }
+
+    setTournamentInformation()
+  });
+}
+
+function setPlayerOneForCasterMode() {
+  url = "https://play.limitlesstcg.com/ext/dillonzer/init?username="+playerName+"&tournamentId="+tournamentId
+
+  var settings = {
+    "url": url,
+    "method": "GET",
+    "timeout": 0,
+  };
+  
+  $.ajax(settings).done(function (response) {
     if(typeof response.player.deck !== 'undefined')
     {
       decklistObject = new Decklist(response.player.decklist.pokemon, response.player.decklist.trainer, response.player.decklist.energy)
@@ -139,8 +188,6 @@ function getTournamentInformation() {
     {
       playerObject = new Player(response.player.name,undefined,undefined,undefined)
     }
-
-    setTournamentInformation()
   });
 }
 
@@ -197,14 +244,7 @@ function createStandings()
           for(let image in element[key])
           {
             var img = document.createElement("img");
-            if(element[key][image] === "substitute")
-            {
-              img.src = "https://play.limitlesstcg.com/img/"+element[key][image]+".png"
-            }
-            else
-            {         
-              img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+element[key][image]+".png"
-            }
+            img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+element[key][image]+".png"
             cell.appendChild(img)
             
           }
@@ -213,7 +253,7 @@ function createStandings()
         {
           var img = document.createElement("img");
           img.style.paddingLeft = "5px"
-          img.src = "https://play.limitlesstcg.com/img/flags/"+element[key]+".png"
+          img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/flags/"+element[key]+".png"
           cell.appendChild(img)
         } 
         else
@@ -249,14 +289,7 @@ function createStandings()
         for(let image in element[key])
         {
           var img = document.createElement("img");
-          if(element[key][image] === "substitute")
-          {
-            img.src = "https://play.limitlesstcg.com/img/"+element[key][image]+".png"
-          }
-          else
-          {         
-            img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+element[key][image]+".png"
-          }
+          img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+element[key][image]+".png"
           cell.appendChild(img)
           
         }
@@ -319,16 +352,7 @@ function updatePlayerInformation()
     document.getElementById("dropStatus").src = "./images/red_light.png"
     document.getElementById("dropStatus").title = "Dropped"
   }
-  if(tournamentObject.Ongoing)
-  {
-    document.getElementById("tournamentOngoing").src = "./images/green_light.png"
-    document.getElementById("tournamentOngoing").title = "On-going Tournament"
-  }
-  else
-  {
-    document.getElementById("tournamentOngoing").src = "./images/red_light.png"
-    document.getElementById("tournamentOngoing").title = "Tournament is currently not running"
-  }
+  
   document.getElementById("playerRecord").textContent = playerObject.Record
 }
 
@@ -363,58 +387,160 @@ var timerFunction = function() {
   
 }
 
-var updateInformation = function() {
-  var settings = {
-    "url": "https://play.limitlesstcg.com/ext/dillonzer/update?username="+playerName+"&tournamentId="+tournamentId,
-    "method": "GET",
-    "timeout": 0,
-  };
-  
-  $.ajax(settings).done(function (response) {
+var updateInformation = async function() {
+  if(channelInCasterMode)
+  {
+    if(typeof tournamentObject == 'undefined') { await sleep(1000); }
+    url = "https://play.limitlesstcg.com/ext/live/tournament/"+tournamentId+"/match?round="+tournamentObject.Round+"&table=1"
     
-    tournamentObject.Round = response.tournament.round
-    tournamentObject.Ongoing = response.tournament.ongoing
-    if(response.tournament.roundEnd != null)
-    {
-      tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
-    }
-    if(response.match != null && typeof response.match.opponent != 'undefined')
-    {
-        if(typeof response.match.opponent.deck != 'undefined')
+
+    var settings = {
+      "url": url,
+      "method": "GET",
+      "timeout": 0,
+    };
+    
+    $.ajax(settings).done(function (response) {
+      playerName = response.player1.user
+
+      url = "https://play.limitlesstcg.com/ext/dillonzer/update?username="+playerName+"&tournamentId="+tournamentId
+
+      var settings = {
+        "url": url,
+        "method": "GET",
+        "timeout": 0,
+      };
+      
+      $.ajax(settings).done(function (response) {
+          tournamentObject.Round = response.tournament.round
+          tournamentObject.Ongoing = response.tournament.ongoing
+          if(tournamentObject.Ongoing)
+          {
+            document.getElementById("tournamentOngoing").src = "./images/green_light.png"
+            document.getElementById("tournamentOngoing").title = "On-going Tournament"
+          }
+          else
+          {
+            document.getElementById("tournamentOngoing").src = "./images/red_light.png"
+            document.getElementById("tournamentOngoing").title = "Tournament is currently not running"
+          }
+
+          setPlayerOneForCasterMode()
+          
+          if(response.tournament.roundEnd != null)
+          {
+            tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
+          }
+          if(response.match != null && typeof response.match.opponent != 'undefined')
+          {
+
+              if(typeof response.match.opponent.deck != 'undefined')
+              {
+                decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
+                opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
+              }
+              else
+              {
+                opponentObject = new Player(response.match.opponent.name,undefined,undefined,undefined)
+              }
+              
+              matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
+            
+          }
+          else
+          {
+            matchObject = undefined
+          }
+                
+          if(response.tournament.roundEnd != null)
+          {
+            tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
+            clearInterval(timerFunction)
+            setInterval(timerFunction, 1100)
+          }
+          else
+          {        
+            document.getElementById("roundTimer").textContent = "Round " + tournamentObject.Round
+          }
+        
+          getStandings()
+          getMatchInformation()
+        
+      });
+    })
+  }
+  else
+  {
+    url = "https://play.limitlesstcg.com/ext/dillonzer/update?username="+playerName+"&tournamentId="+tournamentId
+
+    var settings = {
+      "url": url,
+      "method": "GET",
+      "timeout": 0,
+    };
+    
+    $.ajax(settings).done(function (response) {
+        tournamentObject.Round = response.tournament.round
+        tournamentObject.Ongoing = response.tournament.ongoing
+        if(tournamentObject.Ongoing)
         {
-          decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
-          opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
+          document.getElementById("tournamentOngoing").src = "./images/green_light.png"
+          document.getElementById("tournamentOngoing").title = "On-going Tournament"
         }
         else
         {
-          opponentObject = new Player(response.match.opponent.name,undefined,undefined,undefined)
+          document.getElementById("tournamentOngoing").src = "./images/red_light.png"
+          document.getElementById("tournamentOngoing").title = "Tournament is currently not running"
         }
-        
-        matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
-      
-    }
-    else
-    {
-      matchObject = undefined
-    }
-    
-    playerObject.Record = response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
-    playerObject.Active = response.player.active
-    updatePlayerInformation()
 
-    if(response.tournament.roundEnd != null)
-    {
-      tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
-      clearInterval(timerFunction)
-      setInterval(timerFunction, 1100)
-    }
-    else
-    {        
-      document.getElementById("roundTimer").textContent = "Round " + tournamentObject.Round
-    }
-    getStandings()
-    getMatchInformation()
-  });
+        if(response.tournament.roundEnd != null)
+        {
+          tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
+        }
+        if(response.match != null && typeof response.match.opponent != 'undefined')
+        {
+            if(typeof response.match.opponent.deck != 'undefined')
+            {
+              decklistObject = new Decklist(response.match.opponent.decklist.pokemon, response.match.opponent.decklist.trainer, response.match.opponent.decklist.energy)
+              opponentObject = new Player(response.match.opponent.name, response.match.opponent.deck.name, response.match.opponent.deck.icons, decklistObject)
+            }
+            else
+            {
+              opponentObject = new Player(response.match.opponent.name,undefined,undefined,undefined)
+            }
+            
+            matchObject = new Match(response.match.completed, response.match.playerScore, response.match.oppScore)
+          
+        }
+        else
+        {
+          matchObject = undefined
+        }
+
+          playerObject.Record = response.player.record.wins + "-" + response.player.record.losses + "-" + response.player.record.ties
+          playerObject.Active = response.player.active
+          updatePlayerInformation()
+        
+        
+    
+        if(response.tournament.roundEnd != null)
+        {
+          tournamentObject.RoundEnd = new Date(response.tournament.roundEnd)
+          clearInterval(timerFunction)
+          setInterval(timerFunction, 1100)
+        }
+        else
+        {        
+          document.getElementById("roundTimer").textContent = "Round " + tournamentObject.Round
+        }
+      
+        getStandings()
+        getMatchInformation()
+      
+    });
+  }
+
+ 
 }
 
 function openMatchInformation()
@@ -422,17 +548,30 @@ function openMatchInformation()
   if(channelHasTournament)
   {
     updateInformation()
-    if(!playerObject.Active)
+    if(!channelInCasterMode)
     {
-      document.getElementById("currentStandings").style.display = "none";
-      document.getElementById("currentMatchInformation").style.display = "none";
-      document.getElementById("droppedout").style.display = "";      
-      document.getElementById("nostandings").style.display = "none";   
-      document.getElementById("nomatches").style.display = "none";  
-      document.getElementById("aboutPage").style.display = "none"; 
+      if(!playerObject.Active)
+      {
+        document.getElementById("currentStandings").style.display = "none";
+        document.getElementById("currentMatchInformation").style.display = "none";
+        document.getElementById("droppedout").style.display = "";      
+        document.getElementById("nostandings").style.display = "none";   
+        document.getElementById("nomatches").style.display = "none";  
+        document.getElementById("aboutPage").style.display = "none"; 
+      }
+      else
+      {
+        document.getElementById("currentStandings").style.display = "none";
+        document.getElementById("currentMatchInformation").style.display = "";
+        document.getElementById("droppedout").style.display = "none";     
+        document.getElementById("nostandings").style.display = "none";    
+        document.getElementById("nomatches").style.display = "none";  
+        document.getElementById("aboutPage").style.display = "none"; 
+      }
     }
     else
     {
+      
       document.getElementById("currentStandings").style.display = "none";
       document.getElementById("currentMatchInformation").style.display = "";
       document.getElementById("droppedout").style.display = "none";     
@@ -440,13 +579,13 @@ function openMatchInformation()
       document.getElementById("nomatches").style.display = "none";  
       document.getElementById("aboutPage").style.display = "none"; 
 
-      getMatchInformation()
     }
+    
   }
 
 }
 
-function getMatchInformation()
+async function getMatchInformation()
 {
   $("#opponentsPokemon tr").remove(); 
   $("#opponentsTrainers tr").remove(); 
@@ -460,6 +599,7 @@ function getMatchInformation()
 
   if(typeof matchObject != 'undefined' && matchObject != "")
   {
+    if(typeof playerObject == 'undefined') {await sleep(1000);}
     document.getElementById("playersMatchUsername").textContent = playerObject.Name + " - Score: " + matchObject.PlayerScore
     document.getElementById("opponentsMatchUsername").textContent = opponentObject.Name + " - Score: " + matchObject.OppScore
 
@@ -470,16 +610,9 @@ function getMatchInformation()
         var img = document.createElement("img");
         img.className = "decklistImagesForMatches"
         img.style.paddingLeft = "5px"
-        if(playerObject.Icons[image] === "substitute")
-        {
-          img.src = "https://play.limitlesstcg.com/img/"+playerObject.Icons[image]+".png"
-          img.title = playerObject.Deck
-        }
-        else
-        {         
-          img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+playerObject.Icons[image]+".png"
-          img.title = playerObject.Deck
-        }
+        
+        img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+playerObject.Icons[image]+".png"
+        img.title = playerObject.Deck
 
         document.getElementById("playersMatchLogo").appendChild(img)
 
@@ -496,16 +629,9 @@ function getMatchInformation()
         var img = document.createElement("img");
         img.className = "decklistImagesForMatches"
         img.style.paddingLeft = "5px"
-        if(opponentObject.Icons[image] === "substitute")
-        {
-          img.src = "https://play.limitlesstcg.com/img/"+opponentObject.Icons[image]+".png"
-          img.title = opponentObject.Deck
-        }
-        else
-        {         
-          img.src = "https://play.limitlesstcg.com/img/pokemon-1.2/"+opponentObject.Icons[image]+".png"
-          img.title = opponentObject.Deck
-        }
+        
+        img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+opponentObject.Icons[image]+".png"
+        img.title = opponentObject.Deck
 
         document.getElementById("opponentsMatchLogo").appendChild(img)
 
@@ -535,22 +661,34 @@ function getMatchInformation()
       document.getElementById("droppedout").getAttribute("style")==null ||
       document.getElementById("nomatches").getAttribute("style")==null)
       {
-        if(playerObject.Active)
+        if(!channelInCasterMode)
         {
-          document.getElementById("currentStandings").style.display = "none";
-          document.getElementById("currentMatchInformation").style.display = "none"; 
-          document.getElementById("nostandings").style.display = "none";   
-          document.getElementById("droppedout").style.display = "none";     
-          document.getElementById("nomatches").style.display = "";  
-          document.getElementById("aboutPage").style.display = "none";  
+          if(playerObject.Active)
+          {
+            document.getElementById("currentStandings").style.display = "none";
+            document.getElementById("currentMatchInformation").style.display = "none"; 
+            document.getElementById("nostandings").style.display = "none";   
+            document.getElementById("droppedout").style.display = "none";     
+            document.getElementById("nomatches").style.display = "";  
+            document.getElementById("aboutPage").style.display = "none";  
+          }
+          else
+          {
+            document.getElementById("currentStandings").style.display = "none";
+            document.getElementById("currentMatchInformation").style.display = "none"; 
+            document.getElementById("nostandings").style.display = "none";   
+            document.getElementById("droppedout").style.display = "";     
+            document.getElementById("nomatches").style.display = "none";  
+            document.getElementById("aboutPage").style.display = "none";  
+          }
         }
         else
         {
           document.getElementById("currentStandings").style.display = "none";
           document.getElementById("currentMatchInformation").style.display = "none"; 
           document.getElementById("nostandings").style.display = "none";   
-          document.getElementById("droppedout").style.display = "";     
-          document.getElementById("nomatches").style.display = "none";  
+          document.getElementById("droppedout").style.display = "none";     
+          document.getElementById("nomatches").style.display = "";  
           document.getElementById("aboutPage").style.display = "none";  
         }
       }
@@ -586,4 +724,8 @@ function createDecklistTable(pokemon, tableName, title)
     let cell = row.insertCell();
     cell.appendChild(text);
   }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
