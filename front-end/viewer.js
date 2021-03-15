@@ -244,7 +244,15 @@ function createStandings()
           for(let image in element[key])
           {
             var img = document.createElement("img");
-            img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+element[key][image]+".png"
+            if(element[key][image]=="substitute")
+            {
+              img.src = "https://play.limitlesstcg.com/img/substitute.png"
+            }
+            else
+            {
+              img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+element[key][image]+".png"
+
+            }
             cell.appendChild(img)
             
           }
@@ -610,8 +618,14 @@ async function getMatchInformation()
         var img = document.createElement("img");
         img.className = "decklistImagesForMatches"
         img.style.paddingLeft = "5px"
-        
-        img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+playerObject.Icons[image]+".png"
+        if(image === "substitute" || image == 0)
+        {
+          img.src = "https://play.limitlesstcg.com/img/substitute.png"
+        }
+        else
+        {         
+          img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+image+".png"
+        }
         img.title = playerObject.Deck
 
         document.getElementById("playersMatchLogo").appendChild(img)
@@ -629,8 +643,14 @@ async function getMatchInformation()
         var img = document.createElement("img");
         img.className = "decklistImagesForMatches"
         img.style.paddingLeft = "5px"
-        
-        img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+opponentObject.Icons[image]+".png"
+        if(image === "substitute" || image == 0)
+        {
+          img.src = "https://play.limitlesstcg.com/img/substitute.png"
+        }
+        else
+        {         
+          img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+image+".png"
+        }
         img.title = opponentObject.Deck
 
         document.getElementById("opponentsMatchLogo").appendChild(img)
