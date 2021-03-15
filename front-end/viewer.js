@@ -295,12 +295,19 @@ function createStandings()
       {
         let cell = row.insertCell();
         for(let image in element[key])
-        {
-          var img = document.createElement("img");
-          img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+element[key][image]+".png"
-          cell.appendChild(img)
-          
-        }
+          {
+            var img = document.createElement("img");
+            if(element[key][image]=="substitute")
+            {
+              img.src = "https://play.limitlesstcg.com/img/substitute.png"
+            }
+            else
+            {
+              img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+element[key][image]+".png"
+
+            }
+            cell.appendChild(img)
+          }
       }
       else if (key == "Country" || key == "Deck" )
       {
