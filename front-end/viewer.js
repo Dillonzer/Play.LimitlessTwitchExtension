@@ -625,13 +625,13 @@ async function getMatchInformation()
         var img = document.createElement("img");
         img.className = "decklistImagesForMatches"
         img.style.paddingLeft = "5px"
-        if(image === "substitute" || image == 0)
+        if(image === "substitute")
         {
           img.src = "https://play.limitlesstcg.com/img/substitute.png"
         }
         else
         {         
-          img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+image+".png"
+          img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+playerObject.Icons[image]+".png"
         }
         img.title = playerObject.Deck
 
@@ -650,13 +650,13 @@ async function getMatchInformation()
         var img = document.createElement("img");
         img.className = "decklistImagesForMatches"
         img.style.paddingLeft = "5px"
-        if(image === "substitute" || image == 0)
+        if(image === "substitute")
         {
           img.src = "https://play.limitlesstcg.com/img/substitute.png"
         }
         else
         {         
-          img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+image+".png"
+          img.src = "https://limitlesstcg.s3.us-east-2.amazonaws.com/pokemon/gen8-v3/"+opponentObject.Icons[image]+".png"
         }
         img.title = opponentObject.Deck
 

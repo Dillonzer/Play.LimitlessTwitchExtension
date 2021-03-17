@@ -20,3 +20,4 @@ Via Panel
 Change Log:
 - Adding the Caster Mode to the Stream Manager section
 - Changing logic in the tool to utilize Caster Mode if the streamer chooses it.
+- Fixed some Image Links
