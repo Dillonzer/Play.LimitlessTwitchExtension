@@ -43,7 +43,7 @@ function Submit() {
   }
 
   var settings = {
-    "url": "https://ptcg-api.herokuapp.com/playlimitless/upsert/"+tournament+"/"+username+"/"+channelId+"/"+casterMode,
+    "url": "https://pkmntcgapi-production.up.railway.app/playlimitless/upsert/"+tournament+"/"+username+"/"+channelId+"/"+casterMode,
     "method": "POST",
     "timeout": 0,
   };
