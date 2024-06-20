@@ -1,7 +1,7 @@
 # Play.Limitless Twitch Extension
 ![Depricated](https://img.shields.io/badge/DEPRICATED-red)
 
-![GitHub License](https://img.shields.io/github/license/Dillonzer/cardbuddy) 
+![GitHub License](https://img.shields.io/github/license/Dillonzer/Play.LimitlessTwitchExtension) 
 
 This extension is used for users to follow along streamer's Play.Limitless Tournaments on Stream
 
